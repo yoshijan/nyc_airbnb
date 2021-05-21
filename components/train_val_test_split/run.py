@@ -8,7 +8,11 @@ import pandas as pd
 import wandb
 import tempfile
 from sklearn.model_selection import train_test_split
-from components.wandb_utils.log_artifact import log_artifact
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, 'home/jgeukes/udacity1/nd0821-c2-build-model-workflow-starter/components/wandb_utils')
+
+from wandb_utils.log_artifact import log_artifact
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()

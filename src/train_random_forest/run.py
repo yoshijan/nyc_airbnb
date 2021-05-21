@@ -6,7 +6,7 @@ import argparse
 import logging
 import os
 import shutil
-
+import tempfile
 import mlflow
 import json
 
@@ -74,7 +74,11 @@ def go(args):
     # Use run.use_artifact(...).file() to get the train and validation artifacts (args.train and args.val)
     # and store the returned path in the "train_local_path" and "val_local_path" variables
 
-    # HERE
+    logger.info(f"Fetching {args.train} from W&B...")
+    train_local_path = run.use_artifact(args.train).file()
+
+    logger.info(f"Fetching {args.val} from W&B...")
+    val_local_path = run.use_artifact(args.val).file()
 
     ##################
 
@@ -96,10 +100,12 @@ def go(args):
     # the hyperparameters that have been passed in. This is very important otherwise the
     # hyperparameter search that we are going to do later will not work
 
-    # HERE
+    sk_pipe = Pipeline([('preprocessing', Preprocessing()), ('randomforest', RandomForestRegressor(**rf_config))])
+
+
 
     # Then fit it to the X_train, y_train data
-
+    sk_pipe.fit(X_train, y_train)
     ##################
 
     # Compute r2 and MAE
@@ -123,10 +129,14 @@ def go(args):
     ###################
 
     # Save the sk_pipe pipeline as a mlflow.sklearn model in the directory "random_forest_dir"
+    with tempfile.TemporaryDirectory() as temp_dir:
+        export_path = os.path.join(temp_dir, args.output_artifact)
 
-    # HERE
+        mlflow.sklearn.save_model(
+            sk_pipe,
+            export_path
+        )
 
-    ##################
 
     # Upload to W&B
     artifact = wandb.Artifact(
@@ -135,7 +145,7 @@ def go(args):
         description="Export of the RandomForest in the MLFlow sklearn format",
         metadata=rf_config,
     )
-    artifact.add_dir("random_forest_dir")
+    artifact.add_dir(temp_dir)
     wandb.log_artifact(artifact)
 
     logger.info("Uploading plots to W&B")

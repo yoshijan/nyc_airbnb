@@ -23,15 +23,6 @@ def go(args):
 
     # We stream the file so that it can be downloaded even if it is bigger
     # than the available memory
-    logger.info(f"Returning sample {args.sample}")
-    logger.info(f"Uploading {args.artifact_name} to Weights & Biases")
-    log_artifact(
-        args.artifact_name,
-        args.artifact_type,
-        args.artifact_description,
-        os.path.join("data_1", args.sample),
-        run,
-    )
     artifact = wandb.Artifact(
         args.artifact_name,
         type=args.artifact_type,

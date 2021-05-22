@@ -53,6 +53,11 @@ def go(args):
     df['name'].fillna('-', inplace=True)
     df['host_name'].fillna('-', inplace=True)
 
+    #add filter for NYC
+    logger.info("Filter for NYC based on coordinates")
+    idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
+    df = df[idx]
+
     logger.info("Save Dataframe locally ")
     df.to_csv("clean_sample.csv", index=False)
 

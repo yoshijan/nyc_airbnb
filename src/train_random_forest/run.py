@@ -100,7 +100,7 @@ def go(args):
     # the hyperparameters that have been passed in. This is very important otherwise the
     # hyperparameter search that we are going to do later will not work
 
-    sk_pipe = Pipeline([('preprocessing', Preprocessing()), ('randomforest', RandomForestRegressor(**rf_config))])
+    sk_pipe = Pipeline([('preprocessing', Preprocessing()), ('random_forest', RandomForestRegressor(**rf_config))])
 
 
 
@@ -129,13 +129,12 @@ def go(args):
     ###################
 
     # Save the sk_pipe pipeline as a mlflow.sklearn model in the directory "random_forest_dir"
-    with tempfile.TemporaryDirectory() as temp_dir:
-        export_path = os.path.join(temp_dir, args.output_artifact)
-
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        export_path = os.path.join(tmp_dir, args.output_artifact)
         mlflow.sklearn.save_model(
             sk_pipe,
             export_path
-        )
+    )
 
 
     # Upload to W&B
@@ -145,7 +144,7 @@ def go(args):
         description="Export of the RandomForest in the MLFlow sklearn format",
         metadata=rf_config,
     )
-    artifact.add_dir(temp_dir)
+    artifact.add_dir(args.output_artifact + '/')
     wandb.log_artifact(artifact)
 
     logger.info("Uploading plots to W&B")

@@ -32,6 +32,17 @@ def go(args):
         os.path.join("data_1", args.sample),
         run,
     )
+    artifact = wandb.Artifact(
+        args.artifact_name,
+        type=args.artifact_type,
+        description=args.artifact_description,
+    )
+    artifact.add_file(os.path.join("data_1", args.sample))
+    run.log_artifact(artifact)
+    # We need to call this .wait() method before we can use the
+    # version below. This will wait until the artifact is loaded into W&B and a
+    # version is assigned
+    artifact.wait()
 
 
 if __name__ == "__main__":

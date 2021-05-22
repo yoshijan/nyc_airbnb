@@ -4,12 +4,10 @@ import scipy.stats
 
 
 def test_no_null_values(data):
-
     assert data.isna().sum().sum() == 0
 
 
 def test_column_names(data):
-
     expected_colums = [
         "id",
         "name",
@@ -36,7 +34,6 @@ def test_column_names(data):
 
 
 def test_neighborhood_names(data):
-
     known_names = ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"]
 
     neigh = set(data['neighbourhood_group'].unique())
@@ -71,8 +68,9 @@ def test_similar_neigh_distrib(data: pd.DataFrame, ref_data: pd.DataFrame, kl_th
 def test_row_count(data: pd.DataFrame):
     assert 15000 < data.shape[0] < 1000000
 
-#test for price in certain range
+
+# test for price in certain range
 def test_price_range(data, min_price, max_price):
-    #check in between and count true values compare with total length
-    result = data['price'].between(min_price,max_price).sum()
+    # check in between and count true values compare with total length
+    result = data['price'].between(min_price, max_price).sum()
     assert result == len(data.index)

@@ -16,14 +16,13 @@ _steps = [
     # NOTE: We do not include this in the steps so it is not run by mistake.
     # You first need to promote a model export to "prod" before you can run this,
     # then you need to run this step explicitly
-#    "test_regression_model"
+    #    "test_regression_model"
 ]
 
 
 # This automatically reads in the configuration
 @hydra.main(config_name='config')
 def go(config: DictConfig):
-
     # Make sure we are logged in to Weights & Biases ("wandb")
     wandb.login(key=config['main']['wandb_api_key'])
 
@@ -39,7 +38,7 @@ def go(config: DictConfig):
     with tempfile.TemporaryDirectory() as tmp_dir:
 
         if "download" in active_steps:
-            #Download file and load in W&B - not working!! so pass uploaded data manually
+            # Download file and load in W&B - not working!! so pass uploaded data manually
             _ = mlflow.run(
                 f"{config['main']['components_repository']}/get_data",
                 "main",
@@ -50,7 +49,6 @@ def go(config: DictConfig):
                     "artifact_description": "Raw file as downloaded"
                 },
             )
-
 
         if "basic_cleaning" in active_steps:
             ##################
@@ -100,9 +98,7 @@ def go(config: DictConfig):
                 },
             )
 
-
         if "train_random_forest" in active_steps:
-
             # NOTE: we need to serialize the random forest configuration into JSON
             rf_config = os.path.abspath("rf_config.json")
             with open(rf_config, "w+") as fp:
@@ -124,7 +120,6 @@ def go(config: DictConfig):
             )
 
         if "test_regression_model" in active_steps:
-
             _ = mlflow.run(
                 f"{config['main']['components_repository']}/test_regression_model",
                 "main",
@@ -133,7 +128,6 @@ def go(config: DictConfig):
                     "test_dataset": "test_data.csv:latest",
                 },
             )
-
 
 
 if __name__ == "__main__":

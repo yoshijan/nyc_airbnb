@@ -18,7 +18,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline
 
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
@@ -27,12 +26,12 @@ class Preprocessing(BaseEstimator, TransformerMixin):
     """
     This class implements the pre-processing steps
     """
+
     def fit(self, X, y=None):
         # Nothing to do
         return self
 
     def transform(self, X, y=None):
-
         # Need to make a copy to avoid changing the original dataset
         X = X.copy()
 
@@ -58,7 +57,6 @@ class Preprocessing(BaseEstimator, TransformerMixin):
 
 
 def go(args):
-
     run = wandb.init(job_type="train_random_forest")
     run.config.update(args)
 
@@ -80,8 +78,6 @@ def go(args):
     logger.info(f"Fetching {args.val} from W&B...")
     val_local_path = run.use_artifact(args.val).file()
 
-    ##################
-
     # Read the downloaded files and divide X and y
     X_train = pd.read_csv(train_local_path)
     y_train = X_train.pop("price")  # this removes the column "price" from X_train and puts it into y_train
@@ -101,8 +97,6 @@ def go(args):
     # hyperparameter search that we are going to do later will not work
 
     sk_pipe = Pipeline([('preprocessing', Preprocessing()), ('random_forest', RandomForestRegressor(**rf_config))])
-
-
 
     # Then fit it to the X_train, y_train data
     sk_pipe.fit(X_train, y_train)
@@ -134,8 +128,7 @@ def go(args):
         mlflow.sklearn.save_model(
             sk_pipe,
             export_path
-    )
-
+        )
 
     # Upload to W&B
     artifact = wandb.Artifact(
@@ -157,7 +150,6 @@ def go(args):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Basic cleaning of dataset")
 
     parser.add_argument("train", type=str, help="Train dataset")
@@ -167,7 +159,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--rf_config",
         help="Random forest configuration. A JSON file containing a dict that will be passed to the "
-        "scikit-learn constructor for RandomForestRegressor."
+             "scikit-learn constructor for RandomForestRegressor."
     )
 
     parser.add_argument("--output_artifact", type=str, help="Name for the output serialized model", required=True)

@@ -11,13 +11,11 @@ from sklearn.metrics import mean_absolute_error
 
 from wandb_utils.log_artifact import log_artifact
 
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
 
 def go(args):
-
     run = wandb.init(job_type="test_model")
     run.config.update(args)
 
@@ -50,19 +48,18 @@ def go(args):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Test the provided model against the test dataset")
 
     parser.add_argument(
         "--mlflow_model",
-        type=str, 
+        type=str,
         help="Input MLFlow model",
         required=True
     )
 
     parser.add_argument(
         "--test_dataset",
-        type=str, 
+        type=str,
         help="Test dataset",
         required=True
     )

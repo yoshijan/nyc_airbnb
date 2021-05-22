@@ -8,13 +8,11 @@ import os
 
 import wandb
 
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
 
 def go(args):
-
     run = wandb.init(job_type="download_file")
     run.config.update(args)
 

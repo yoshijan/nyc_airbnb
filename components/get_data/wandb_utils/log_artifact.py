@@ -20,7 +20,7 @@ def log_artifact(artifact_name, artifact_type, artifact_description, filename, w
         type=artifact_type,
         description=artifact_description,
     )
-    artifact.add_file(filename+'/')
+    artifact.add_file(filename)
     wandb_run.log_artifact(artifact)
     # We need to call this .wait() method before we can use the
     # version below. This will wait until the artifact is loaded into W&B and a
